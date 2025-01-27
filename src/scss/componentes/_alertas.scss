@@ -1,0 +1,21 @@
+@use 'base/variables' as v;
+
+.alerta {
+    padding: calc(v.$separacion / 4); /* Espaciado interno */
+    color: v.$blanco; /* Texto en blanco */
+    width: 100%; /* Ocupa todo el ancho disponible */
+    display: block; /* Bloques separados */
+    margin-bottom: 1.5rem; /* Espaciado entre alertas */
+    border-radius: 0.5rem; /* Opcional: esquinas redondeadas */
+    font-size: 2rem; /* Tamaño del texto */
+    text-align: center; /* Alineación del texto */
+    font-weight: v.$bold; /* Negrita */
+
+    &.error {
+        background-color: v.$rojo; /* Fondo rojo */
+        
+    }
+    &.exito {
+        background-color: v.$verde; /* Fondo verde */
+    }
+}

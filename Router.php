@@ -49,27 +49,7 @@ class Router
         // Proteger Rutas...
         session_start();
 
-        // Arreglo de rutas protegidas...
-        // $rutas_protegidas = ['/admin', '/propiedades/crear', '/propiedades/actualizar', '/propiedades/eliminar', '/vendedores/crear', '/vendedores/actualizar', '/vendedores/eliminar'];
 
-        // $auth = $_SESSION['login'] ?? null;
-        //Cambios(original)
-        // $currentUrl = $_SERVER['PATH_INFO'] ?? '/';
-        // $method = $_SERVER['REQUEST_METHOD'];
-
-        // if ($method === 'GET') {
-        //     $fn = $this->getRoutes[$currentUrl] ?? null;
-        // } else {
-        //     $fn = $this->postRoutes[$currentUrl] ?? null;
-        // }
-
-
-        // if ($fn) {
-        //     // Call user fn va a llamar una función cuando no sabemos cual sera
-        //     call_user_func($fn, $this); // This es para pasar argumentos
-        // } else {
-        //     echo "Página No Encontrada o Ruta no válida";
-        // }
         //Cambios(nuevo)
         $method = $_SERVER['REQUEST_METHOD']; // Detecta el método (GET o POST)
         $url = rtrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), ''); // Obtén la URL normalizada
