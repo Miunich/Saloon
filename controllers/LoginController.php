@@ -49,17 +49,20 @@ class LoginController
 
                     //Generar un token
                     $usuario->crearToken();
-
-                    //Enviar el Email
-                    $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
                     
-                    $email->enviarConfirmacion();
-
                     //Crear el usuario
-                    $resultado = $usuario->crear();
+                    $resultado = $usuario->guardar();
+                    
+                    
                     // debuguear($usuario);
                     if($resultado){
-                        echo 'Usuario Creado';
+                        //Enviar el Email
+                        $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
+                        
+                        $email->enviarConfirmacion();
+                        header('Location: /mensaje');
+                    } else {
+                        $alertas = Usuario::getAlertas();
                     }
                 }
             }
@@ -74,38 +77,48 @@ class LoginController
     // test de confirmar cuenta
     public static function confirmar(Router $router)
     {
-        // $router->render('auth/crear-cuenta');
+        
         $alertas = [];
-        $token = $_GET['token'] ?? ''; // Obtén el token de la URL
+        $token = s($_GET['token']);
+        // debuguear($token);
 
-        if (!$token) {
+        $usuario = Usuario::where('token', $token);
+        
+        if(!$usuario){
+            //Mostrar mensaje de error
             Usuario::setAlerta('error', 'Token no válido');
-        } else {
-            // Buscar el usuario por su token
-            $usuario = Usuario::where('token', $token);
+        }else{
+            //Modificar a usuario confirmado
+            debuguear($usuario);
 
-            if (empty($usuario)) {
-                Usuario::setAlerta('error', 'Token no válido o el usuario ya está confirmado');
-            } else {
-                // Confirmar la cuenta
-                $usuario->confirmado = 1; // O el valor correspondiente en la base de datos
-                $usuario->token = null; // Elimina el token después de confirmar
-
-                // Guardar los cambios
-                $usuario->guardar();
-                Usuario::setAlerta('exito', 'Cuenta confirmada correctamente');
-            }
+            $usuario->confirmado = 1;
+            
+            // $usuario->token = '';
+            // $usuario->guardar();
         }
 
-        // Obtener las alertas
-        $alertas = Usuario::getAlertas();
-
-        // Renderizar la vista
-        // $router->render('auth/confirmar-cuenta', [
-        //     'alertas' => $alertas
-        // ]);
-        $router->render('auth/confirmar-cuenta', [
-            'alertas' => $alertas
-        ]);
+        $router->render('auth/confirmar-cuenta',[
+            'alertas' => $alertas,
+            'usuario' => $usuario
+            ]);
     }
+
+    public static function mensaje(Router $router)
+    {
+        $router->render('auth/mensaje');
+    } 
 }
+
+// public static function confirmar(Router $router)
+//     {
+//         $alertas = [];
+//         $token = s($_GET['token']);
+//         // debuguear($token);
+
+//         $usuario = Usuario::where('token', $token);
+//         // debuguear($usuario);
+//         $router->render('auth/confirmar-cuenta',[
+//             'alertas' => $alertas,
+//             'usuario' => $usuario
+//             ]);
+//     }

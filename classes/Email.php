@@ -41,11 +41,12 @@ class Email
 
         $contenido = '<html>';
         $contenido .= "<p><strong> Hola " . $this->nombre . "</strong><br> Has creado tu cuenta en AppSalon, solo debes confirmarla presionando el siguiente enlace </p>";
-        $contenido .= "<p>Presiona aquí: <a href='http://dev.salon.front/confirmar-cuenta?token=" . $this->token . "'>Confirmar Cuenta</a> </p>";
+        $contenido .= "<p>Presiona aquí: <a href='http://dev.salon.front/confirmar-cuenta?token=".$this->token."'>Confirmar Cuenta</a> </p>";
         $contenido .= "<p> Si tu no solicitaste la creación de la cuenta, ignora este mensaje</p>";
         $contenido .= '</html>';
 
         $mail->Body = $contenido;
+        // debuguear($this->token);
 
         //Enviar el mail
         $mail->send();

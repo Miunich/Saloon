@@ -90,11 +90,11 @@ class ActiveRecord {
     }
 
     // Registros - CRUD
-    public function guardar() {
+    public function guardar($id = null) {
         $resultado = '';
-        if(!is_null($this->id)) {
+        if(!is_null($id)) {
             // actualizar
-            $resultado = $this->actualizar();
+            $resultado = $this->actualizar($id);
         } else {
             // Creando un nuevo registro
             $resultado = $this->crear();
@@ -129,11 +129,11 @@ class ActiveRecord {
         $atributos = $this->sanitizarAtributos();
 
         // Insertar en la base de datos
-        $query = " INSERT INTO " . static::$tabla . " ( ";
-        $query .= join(', ', array_keys($atributos));
-        $query .= " ) VALUES (' "; 
+        $query = " INSERT INTO " . static::$tabla . "(";
+        $query .= join(',', array_keys($atributos));
+        $query .= " ) VALUES ('"; 
         $query .= join("', '", array_values($atributos));
-        $query .= " ') ";
+        $query .= "') ";
 
         // Resultado de la consulta
         $resultado = self::$db->query($query);
@@ -144,7 +144,7 @@ class ActiveRecord {
     }
 
     // Actualizar el registro
-    public function actualizar() {
+    public function actualizar($id) {
         // Sanitizar los datos
         $atributos = $this->sanitizarAtributos();
 
@@ -157,7 +157,7 @@ class ActiveRecord {
         // Consulta SQL
         $query = "UPDATE " . static::$tabla ." SET ";
         $query .=  join(', ', $valores );
-        $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
+        $query .= " WHERE id = '" . self::$db->escape_string($id) . "' ";
         $query .= " LIMIT 1 "; 
 
         // Actualizar BD
@@ -166,10 +166,15 @@ class ActiveRecord {
     }
 
     // Eliminar un Registro por su ID
-    public function eliminar() {
-        $query = "DELETE FROM "  . static::$tabla . " WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+    public function eliminar($id) {
+        $query = "DELETE FROM "  . static::$tabla . " WHERE id = " . self::$db->escape_string($id) . " LIMIT 1";
         $resultado = self::$db->query($query);
         return $resultado;
     }
 
+    public static function where($columna, $valor){
+        $query = "SELECT * FROM " . static::$tabla . " WHERE $columna = '$valor'";
+        $resultado = self::consultarSQL($query);
+        return array_shift($resultado);
+    }
 }

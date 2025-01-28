@@ -76,21 +76,21 @@ class Usuario extends ActiveRecord{
     }
 
     //uso del where
-    public static function where($campo, $valor)
-    {
-        // Crear la consulta SQL para buscar por el campo y el valor
-        $query = "SELECT * FROM " . static::$tabla . " WHERE $campo = ? LIMIT 1";
-        $stmt = self::$db->prepare($query); // Preparar la consulta
-        $stmt->bind_param('s', $valor); // Asignar el parámetro (valor)
-        $stmt->execute(); // Ejecutar la consulta
-        $resultado = $stmt->get_result(); // Obtener los resultados
+    // public static function where($campo, $valor)
+    // {
+    //     // Crear la consulta SQL para buscar por el campo y el valor
+    //     $query = "SELECT * FROM " . static::$tabla . " WHERE $campo = ? LIMIT 1";
+    //     $stmt = self::$db->prepare($query); // Preparar la consulta
+    //     $stmt->bind_param('s', $valor); // Asignar el parámetro (valor)
+    //     $stmt->execute(); // Ejecutar la consulta
+    //     $resultado = $stmt->get_result(); // Obtener los resultados
 
-        if ($resultado->num_rows > 0) {
-            $datos = $resultado->fetch_assoc(); // Obtener los datos como un array asociativo
-            return new self($datos); // Crear una nueva instancia del modelo con los datos obtenidos
-        }
+    //     if ($resultado->num_rows > 0) {
+    //         $datos = $resultado->fetch_assoc(); // Obtener los datos como un array asociativo
+    //         return new self($datos); // Crear una nueva instancia del modelo con los datos obtenidos
+    //     }
 
-        return null; // Retorna null si no encuentra ningún resultado
-    }
+    //     return null; // Retorna null si no encuentra ningún resultado
+    // }
     
 }
