@@ -12,3 +12,7 @@
         <p class="descripcion-pagina">Hubo un error al enviar el correo de confirmación, por favor intenta de nuevo 😢</p>
     <?php endif; ?>
 <?php endif; ?>
+
+<div class="acciones">
+    <a href="/login" class="boton boton-verde">Iniciar Sesión</a>
+</div>
