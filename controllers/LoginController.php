@@ -24,7 +24,24 @@ class LoginController
 
                 if($usuario){
                     //Verificar el password
-                    $usuario->comprobarPasswordAndVerificado($auth->password);
+                    if($usuario->comprobarPasswordAndVerificado($auth->password)){
+                        session_start();
+
+                        $_SESSION['id'] = $usuario->id;
+                        $_SESSION['nombre'] = $usuario->nombre . " " . $usuario->apellido;
+                        $_SESSION['email'] = $usuario->email;
+                        $_SESSION['login'] = true;
+
+                        //Redireccionamiento
+                        if($usuario->admin === "1"){
+                            $_SESSION['admin'] = $usuario->admin ?? null;
+                            header('Location: /admin');
+                        }else{
+                            header('Location: /cita');
+                        }
+
+                        
+                    }
                 }else{
                     Usuario::setAlerta('error', 'El usuario no existe');
                 }
@@ -42,13 +59,87 @@ class LoginController
     {
         echo 'Cerrando Sesión ';
     }
-    public static function recuperar()
+    public static function recuperar(Router $router)
     {
-        echo 'Recuperar contraseña';
+        $alertas = [];
+        $error = false;
+
+        $token = s($_GET['token']);
+        
+        //Buscar usuario por token
+        $usuario = Usuario::where('token', $token);
+
+        if(empty($usuario)){
+            Usuario::setAlerta('error', 'Token no válido');
+            $error = true;
+        }
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            //Leer el nuevo password y guardarlo en la base de datos
+            $password = new Usuario($_POST);
+            $alertas = $password->validarPassword();
+
+            if(empty($alertas)){
+                $usuario->password = null;
+
+                $usuario->password = $password->password;
+                $usuario->hashPassword();
+                $usuario->token = null;
+
+                $resultado = $usuario->actualizar($usuario->id);
+
+                if($resultado){
+                    header('Location: /');
+                }
+
+                debuguear($resultado);
+            }
+
+        }
+
+        $alertas = Usuario::getAlertas();
+
+        $router->render('auth/recuperar-password', [
+            'alertas' => $alertas,
+            'error' => $error
+        ]);
     }
     public static function olvide(Router $router)
     {
-        $router->render('auth/olvide-password');
+        $alertas = [];
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $auth = new Usuario($_POST);
+            $alertas = $auth->validarEmail();
+            
+            if(empty($alertas)){
+                $usuario = Usuario::where('email', $auth->email);
+
+                if($usuario && $usuario->confirmado === "1"){
+
+                    //Generar un token de un solo uso
+                    $usuario->crearToken();
+                    $usuario->actualizar($usuario->id);
+
+                    // Enviar el email
+
+                    $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
+                    $email->enviarInstrucciones();
+
+                    //Alerta de exito
+                    Usuario::setAlerta('exito', 'Revisa tu email para recuperar tu contraseña');
+                    
+                } else{
+                    Usuario::setAlerta('error', 'El usuario no existe o no está confirmado');
+                    
+                }
+            }
+        }
+        $alertas = Usuario::getAlertas();
+
+        $router->render('auth/olvide-password', [
+            'alertas' => $alertas
+        ]);
     }
     public static function crear(Router $router)
     {

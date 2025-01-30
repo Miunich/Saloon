@@ -77,19 +77,42 @@ class Usuario extends ActiveRecord{
 
     public function validarLogin(){
        if(!$this->email){
-            self::$alertas['error'][] = "El email es obligatorio";
+            self::$alertas['error'][] = "El Email es obligatorio";
         }
         if(!$this->password){
-            self::$alertas['error'][] = "El password es obligatorio";
+            self::$alertas['error'][] = "El Password es obligatorio";
+        }
+        return self::$alertas;
+    }
+
+    public function validarEmail(){
+        if(!$this->email){
+            self::$alertas['error'][] = "El Email es obligatorio";
+        }
+
+        return self::$alertas;
+    }
+
+    public function validarPassword(){
+        if(!$this->password){
+            self::$alertas['error'][] = "El Password es obligatorio";
+        }
+        if(strlen($this->password) < 6){
+            self::$alertas['error'][] = "El Password debe tener al menos 6 caracteres";
         }
         return self::$alertas;
     }
 
     public function comprobarPasswordAndVerificado($password){
 
+        //Compara el password que viene del formulario con el de la BD
         $resultado = password_verify($password, $this->password);
         
-        debuguear($resultado);
+        if(!$resultado || !$this->confirmado){
+            self::$alertas['error'][] = "El password es incorrecto o tu cuenta no ha sido confirmada";
+        }else{
+            return true;
+        }
     }
     
 }

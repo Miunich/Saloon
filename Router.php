@@ -47,7 +47,8 @@ class Router
     {
 
         // Proteger Rutas...
-        session_start();
+        // Ya existe otro start_session en login controller
+        // session_start(); 
 
 
         //Cambios(nuevo)
