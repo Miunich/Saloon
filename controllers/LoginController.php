@@ -80,19 +80,18 @@ class LoginController
             $alertas = $password->validarPassword();
 
             if(empty($alertas)){
-                $usuario->password = null;
-
                 $usuario->password = $password->password;
                 $usuario->hashPassword();
                 $usuario->token = null;
 
                 $resultado = $usuario->actualizar($usuario->id);
 
-                if($resultado){
+                if ($resultado) {
                     header('Location: /');
                 }
 
-                debuguear($resultado);
+
+                
             }
 
         }
