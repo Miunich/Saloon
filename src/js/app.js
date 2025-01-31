@@ -8,7 +8,8 @@ function iniciarApp() {
     mostrarSeccion(); //Muestra la sección de acuerdo al paso actual del formulario
     tabs(); //Cambia la sección de acuerdo a la pestaña seleccionada
     botonesPaginador(); //Quita o agrega los botones de paginación
-
+    paginaSiguiente(); //Avanza a la siguiente página
+    paginaAnterior(); //Retrocede a la página anterior
 }
 
 function mostrarSeccion() {
@@ -63,4 +64,21 @@ function botonesPaginador() {
         siguiente.classList.remove('ocultar');  // Muestra "siguiente" en los demás casos
     }
     
+}
+
+function paginaSiguiente() {
+    const siguiente = document.querySelector('#siguiente');
+    siguiente.addEventListener('click', function () {
+        paso++;
+        botonesPaginador();
+        mostrarSeccion();
+    });
+}
+function paginaAnterior() {
+    const anterior = document.querySelector('#anterior');
+    anterior.addEventListener('click', function () {
+        paso--;
+        botonesPaginador();
+        mostrarSeccion();
+    });
 }
