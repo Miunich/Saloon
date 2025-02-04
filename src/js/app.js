@@ -10,6 +10,9 @@ function iniciarApp() {
     botonesPaginador(); //Quita o agrega los botones de paginación
     paginaSiguiente(); //Avanza a la siguiente página
     paginaAnterior(); //Retrocede a la página anterior
+
+    consultarAPI(); //Consulta la API en el backend de PHP
+    
 }
 
 function mostrarSeccion() {
@@ -80,5 +83,44 @@ function paginaAnterior() {
         paso--;
         botonesPaginador();
         mostrarSeccion();
+    });
+}
+
+async function consultarAPI(){
+
+    try{
+        const url = 'http://dev.salon.front/api/servicios';
+        const resultado = await fetch(url);
+        const servicios = await resultado.json();
+        mostrarServicios(servicios);
+
+        
+    }catch(error){
+        console.log(error);
+    }
+}
+
+function mostrarServicios(servicios){
+    servicios.forEach(servicio => {
+        const {id, nombre, precio} = servicio;
+
+        const nombreServicio = document.createElement('P');
+        // después le puedo dar forma con css (nombre-servicio)
+        nombreServicio.classList.add('nombre-servicio');
+        nombreServicio.textContent = nombre;
+
+        const precioServicio = document.createElement('P');
+        precioServicio.classList.add('precio-servicio');
+        precioServicio.textContent = `$${precio}`;
+
+        const servicioDiv = document.createElement('DIV');
+        servicioDiv.classList.add('servicio');
+        servicioDiv.dataset.idServicio = id;
+
+        servicioDiv.appendChild(nombreServicio);
+        servicioDiv.appendChild(precioServicio);
+
+        //Inyectar en el HTML servicios
+        document.querySelector('#servicios').appendChild(servicioDiv);
     });
 }
