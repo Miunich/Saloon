@@ -1,6 +1,7 @@
 let paso = 1;
 
 const cita = {
+    id: '',
     nombre: '',
     fecha: '',
     hora: '',
@@ -19,6 +20,7 @@ function iniciarApp() {
     paginaAnterior(); //Retrocede a la página anterior
 
     consultarAPI(); //Consulta la API en el backend de PHP
+    idCliente(); //Genera un id único para el cliente
     nombreCliente(); //Añade el nombre del cliente al objeto cita
     seleccionarFecha(); //Añade la fecha al objeto cita
     seleccionarHora(); //Añade la hora al objeto cita
@@ -168,6 +170,9 @@ function seleccionarServicio(servicio) {
 
 
     // console.log(cita);
+}
+function idCliente() {
+    const id = document.querySelector('#id').value;
 }
 
 function nombreCliente() {
@@ -319,30 +324,36 @@ function mostrarResumen() {
 }
 
 async function reservarCita() {
-    const {nombre, fecha, hora, servicios} = cita;
+    console.log("Cita antes de enviar:", cita);  // 🔍 Verifica qué datos tiene `cita`
 
-    const idServicios = servicios.map(servicio => servicio.id);
-    // console.log(idServicios);
-
+    const { nombre, fecha, hora, servicios, id, usuarioid } = cita; // <-- `id` se obtiene de `cita`
     
+    const idServicios = servicios.map(servicio => servicio.id);
 
     const datos = new FormData();
-    datos.append('nombre', cita.nombre);
-    datos.append('fecha', cita.fecha);
-    datos.append('hora', cita.hora);
+    datos.append('usuarioid', usuarioid);  // 🚨 Si `id` es undefined, `usuarioid` no se enviará
+    datos.append('fecha', fecha);
+    datos.append('hora', hora);
     datos.append('servicios', idServicios);
 
+    console.log([...datos]);  // 🔍 Verifica los valores antes de enviarlos
 
-    //Petición hacia la API
-    const url = 'http://dev.salon.front/api/citas';
-    const respuesta = await fetch(url, {
-        method: 'POST',
-        body: datos
-        
-    });
 
-    const resultado = await respuesta.json();
-    console.log(resultado);
+    try{
+
+        //Petición hacia la API
+        const url = 'http://dev.salon.front/api/citas';
+        const respuesta = await fetch(url, {
+            method: 'POST',
+            body: datos
+            
+        });
+    
+        const resultado = await respuesta.json();
+        console.log(resultado);
+    }catch (error) {
+        console.error("Error al enviar la cita:", error);
+    }
 
     // console.log([...datos]);
     
