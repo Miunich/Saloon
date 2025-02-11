@@ -5,6 +5,7 @@ const cita = {
     nombre: '',
     fecha: '',
     hora: '',
+    usuarioid: '',
     servicios: []
 }
 
@@ -63,7 +64,7 @@ function tabs() {
             botonesPaginador();
             mostrarSeccion();
 
-            
+
         });
     })
 }
@@ -173,6 +174,7 @@ function seleccionarServicio(servicio) {
 }
 function idCliente() {
     const id = document.querySelector('#id').value;
+    cita.usuarioid = id;
 }
 
 function nombreCliente() {
@@ -191,7 +193,7 @@ function seleccionarHora() {
         if (hora < 10 || hora > 18) {
             e.target.value = '';
             mostrarAlerta('Hora no válida', 'error', '.formulario');
-            
+
         } else {
             cita.hora = e.target.value;
 
@@ -238,7 +240,7 @@ function mostrarAlerta(mensaje, tipo, elemento, desaparece = true) {
             alerta.remove();
         }, 3000);
     }
-    
+
 }
 
 function mostrarResumen() {
@@ -250,15 +252,15 @@ function mostrarResumen() {
     }
 
 
-    if(Object.values(cita).includes('') || cita.servicios.length === 0){
+    if (Object.values(cita).includes('') || cita.servicios.length === 0) {
         mostrarAlerta('Faltan datos de servicios, hora o fecha ', 'error', '.contenido-resumen', false);
         return;
     }
 
     // Formatear el div de resumen
-    const{nombre, fecha, hora, servicios} = cita;
+    const { nombre, fecha, hora, servicios } = cita;
 
-    
+
 
     //Heading para Servicios en resumen
     const headingServicios = document.createElement('H3');
@@ -266,8 +268,8 @@ function mostrarResumen() {
     resumen.appendChild(headingServicios);
 
     //Iterando y mostrando los servicios
-    servicios.forEach(servicio =>{
-        const {id, nombre, precio} = servicio;
+    servicios.forEach(servicio => {
+        const { id, nombre, precio } = servicio;
         const contenedorServicio = document.createElement('DIV');
         contenedorServicio.classList.add('contenedor-servicio');
 
@@ -294,14 +296,14 @@ function mostrarResumen() {
     //Formatear la fecha en español
     const fechaObj = new Date(fecha);//desface de 1 día
     const mes = fechaObj.getMonth();
-    const dia = fechaObj.getDate()+2;
+    const dia = fechaObj.getDate() + 2;
     const year = fechaObj.getFullYear();
 
     const fechaUTC = new Date(Date.UTC(year, mes, dia));//desface de nuevo de 1 día
-    
-    const opciones = { weekday:'long', year:'numeric', month:'long', day:'numeric'};
+
+    const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const fechaFormateada = fechaUTC.toLocaleDateString('es-MX', opciones);
-    
+
 
     const fechaCita = document.createElement('P');
     fechaCita.innerHTML = `<span>Fecha:</span> ${fechaFormateada}`;
@@ -319,43 +321,48 @@ function mostrarResumen() {
     resumen.appendChild(nombreCliente);
     resumen.appendChild(fechaCita);
     resumen.appendChild(horaCita);
-    
+
     resumen.appendChild(botonReservar);
 }
 
 async function reservarCita() {
     console.log("Cita antes de enviar:", cita);  // 🔍 Verifica qué datos tiene `cita`
 
+    // Asegurar que usuarioid tiene un valor antes de enviarlo
+    cita.usuarioid = document.getElementById("usuarioid").value;
+
+    console.log("usuarioid en cita:", cita.usuarioid);  // 🔍 Verifica si usuarioid tiene un valor válido
+
     const { nombre, fecha, hora, servicios, id, usuarioid } = cita; // <-- `id` se obtiene de `cita`
-    
+
     const idServicios = servicios.map(servicio => servicio.id);
 
     const datos = new FormData();
-    datos.append('usuarioid', usuarioid);  // 🚨 Si `id` es undefined, `usuarioid` no se enviará
-    datos.append('fecha', fecha);
-    datos.append('hora', hora);
+    datos.append('fecha', cita.fecha);
+    datos.append('hora', cita.hora);
+    datos.append('usuarioid', cita.usuarioid);  // Corregido para enviar el valor de usuarioid
     datos.append('servicios', idServicios);
 
     console.log([...datos]);  // 🔍 Verifica los valores antes de enviarlos
 
 
-    try{
+    try {
 
         //Petición hacia la API
         const url = 'http://dev.salon.front/api/citas';
         const respuesta = await fetch(url, {
             method: 'POST',
             body: datos
-            
+
         });
-    
+
         const resultado = await respuesta.json();
         console.log(resultado);
-    }catch (error) {
+    } catch (error) {
         console.error("Error al enviar la cita:", error);
     }
 
     // console.log([...datos]);
-    
+
 }
 

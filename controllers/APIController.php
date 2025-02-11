@@ -16,7 +16,9 @@ class APIController
     public static function guardar()
     {
         $cita = new Cita($_POST);
+        // echo json_encode($cita);
         $resultado = $cita->guardar();
         echo json_encode($resultado);
+        // echo json_encode($cita);
     }
 }
