@@ -1,11 +1,11 @@
 let paso = 1;
 
 const cita = {
-    id: '',
+    // id: '',
     nombre: '',
     fecha: '',
     hora: '',
-    usuarioid: '',
+    // usuarioid: '', //Prueba para no obtener el error de datos vacíos
     servicios: []
 }
 
@@ -258,7 +258,7 @@ function mostrarResumen() {
     }
 
     // Formatear el div de resumen
-    const { nombre, fecha, hora, servicios } = cita;
+    const { nombre, fecha, hora, servicios, usuarioid,id } = cita;
 
 
 
@@ -328,19 +328,16 @@ function mostrarResumen() {
 async function reservarCita() {
     console.log("Cita antes de enviar:", cita);  // 🔍 Verifica qué datos tiene `cita`
 
-    // Asegurar que usuarioid tiene un valor antes de enviarlo
-    cita.usuarioid = document.getElementById("usuarioid").value;
-
-    console.log("usuarioid en cita:", cita.usuarioid);  // 🔍 Verifica si usuarioid tiene un valor válido
+    
 
     const { nombre, fecha, hora, servicios, id, usuarioid } = cita; // <-- `id` se obtiene de `cita`
 
     const idServicios = servicios.map(servicio => servicio.id);
 
     const datos = new FormData();
-    datos.append('fecha', cita.fecha);
-    datos.append('hora', cita.hora);
-    datos.append('usuarioid', cita.usuarioid);  // Corregido para enviar el valor de usuarioid
+    datos.append('fecha', fecha);
+    datos.append('hora', hora);
+    datos.append('usuarioid', usuarioid);  // Corregido para enviar el valor de usuarioid
     datos.append('servicios', idServicios);
 
     console.log([...datos]);  // 🔍 Verifica los valores antes de enviarlos
@@ -357,9 +354,31 @@ async function reservarCita() {
         });
 
         const resultado = await respuesta.json();
-        console.log(resultado);
+        console.log(resultado.resultado);
+
+        if (resultado.resultado) {
+            //Mostrar alerta
+            Swal.fire({
+                icon: "success",
+                title: "Cita creada",
+                text: "Tu cita fue creada correctamente",
+                button: "OK"
+                
+              }).then(() => {
+                window.location.reload();
+              });
+        }
     } catch (error) {
         console.error("Error al enviar la cita:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al crear la cita",
+            button: "OK"
+            
+          }).then(() => {
+            window.location.reload();
+          });
     }
 
     // console.log([...datos]);
