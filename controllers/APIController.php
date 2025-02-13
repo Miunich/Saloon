@@ -37,12 +37,9 @@ class APIController
             $citaServicio->guardar();
         }
     
-        //Retornamos una respuesta
-        $respuesta = [
-            'resultado' => $resultado,
-        ];
+        
 
-        echo json_encode($respuesta);
-        // echo json_encode($cita);
+        echo json_encode([ 'resultado' => $resultado ]);
+        
     }
 }

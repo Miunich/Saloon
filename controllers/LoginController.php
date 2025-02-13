@@ -57,7 +57,11 @@ class LoginController
     }
     public static function logout()
     {
-        echo 'Cerrando Sesión ';
+        session_start();
+
+        $_SESSION = [];
+
+        header('Location: /');
     }
     public static function recuperar(Router $router)
     {
