@@ -374,7 +374,7 @@ async function reservarCita() {
             icon: "error",
             title: "Error",
             text: "Error al crear la cita",
-            button: "OK"
+            
             
           }).then(() => {
             window.location.reload();
