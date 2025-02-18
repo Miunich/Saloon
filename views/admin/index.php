@@ -23,7 +23,12 @@
 <div id="citas-admin">
     <!-- <h2>Citas</h2> -->
     <ul class="citas">
+<?php
+    if(count($citas) === 0){
+        echo "<h2>No hay citas para esta fecha</h2>";
+    }
 
+?>
     
     <?php 
         $idCita = 0;

@@ -11,7 +11,21 @@ class AdminController
     {
         session_start();
 
-        $fecha = date('Y-m-d');
+        $fecha = $_GET['fecha'] ?? date('Y-m-d');
+
+        if ($fecha) {
+            $fechaPartes = explode('-', $fecha);
+
+            if (isset($fechaPartes[1], $fechaPartes[2])) {
+                $esFechaValida = checkdate((int) $fechaPartes[1], (int) $fechaPartes[2], (int) $fechaPartes[0]);
+            } else {
+                $esFechaValida = false;
+            }
+        } else {
+            $esFechaValida = false;
+        }
+
+        
 
         //Consultar la base de datos
         $consulta = "SELECT citas.id, citas.hora, CONCAT( usuarios.nombre, ' ', usuarios.apellido) as cliente, ";
@@ -27,7 +41,7 @@ class AdminController
 
         $citas = AdminCita::SQL($consulta);
 
-        
+
 
         $router->render('admin/index', [
             'nombre' => $_SESSION['nombre'],
