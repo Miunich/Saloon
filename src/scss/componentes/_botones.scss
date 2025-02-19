@@ -8,3 +8,12 @@
 .boton-eliminar {
     @include m.boton(v.$rojo, v.$blanco);
 }
+.boton-enviar{
+    @include m.boton(v.$azul, v.$blanco);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50vw;
+    margin: 0 auto;
+    border-radius: 10px;
+}
